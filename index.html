@@ -183,22 +183,12 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
   }
-  /* Gercek goruntu gelene kadar: setin fonu uzerinde etiket */
-  .ekran-yer {
-    aspect-ratio: 16 / 9;
+  .ekranlar img {
+    width: 100%;
+    height: auto;
     border-radius: 14px;
-    background-size: cover;
-    background-position: center;
-    border: 2px dashed rgba(255, 255, 255, 0.45);
-    display: grid;
-    place-items: center;
-    text-align: center;
-    font-family: var(--baslik-font);
-    font-size: 18px;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-    padding: 12px;
+    border: 1px solid var(--kart-cizgi);
   }
-  .ekran-yer.acik { color: #111; text-shadow: none; border-color: rgba(0, 0, 0, 0.35); }
 
   /* ---------- Alt bilgi ---------- */
   footer {
@@ -299,10 +289,10 @@
   <div class="sarmal">
     <h2>See it in action</h2>
     <div class="ekranlar">
-      <div class="ekran-yer" style="background-image:url(img/fon_set1.png)">Screenshot 1<br>Purple theme<br>1920×1080</div>
-      <div class="ekran-yer" style="background-image:url(img/fon_set2.png)">Screenshot 2<br>Ocean theme<br>1920×1080</div>
-      <div class="ekran-yer" style="background-image:url(img/fon_set3.png)">Screenshot 3<br>Neon theme<br>1920×1080</div>
-      <div class="ekran-yer acik" style="background-image:url(img/fon_set4.png)">Screenshot 4<br>Ice theme<br>1920×1080</div>
+      <img src="img/shot_purple.png" width="1920" height="1080" loading="lazy" alt="Gameplay in the Purple theme: the hoop chases the disc among orange targets">
+      <img src="img/shot_ocean.png" width="1920" height="1080" loading="lazy" alt="Gameplay in the Ocean theme with power-up targets">
+      <img src="img/shot_neon.png" width="1920" height="1080" loading="lazy" alt="Gameplay in the Neon theme with three hoops on screen">
+      <img src="img/shot_ice.png" width="1920" height="1080" loading="lazy" alt="Gameplay in the Ice theme">
     </div>
   </div>
 </section>
