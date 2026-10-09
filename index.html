@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hoop &amp; Disc: one-finger arcade game for Android &amp; iOS</title>
+<meta name="description" content="Hoop & Disc is a one-finger arcade game. Drag the disc, the hoop chases it. Catch targets with the hoop, never with the disc.">
+<style>
+  @font-face {
+    font-family: "MostlyMono";
+    src: url("fonts/MostlyMono.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  :root {
+    --zemin: #1b1035;
+    --zemin-2: #261548;
+    --kart: rgba(255, 255, 255, 0.06);
+    --kart-cizgi: rgba(255, 255, 255, 0.12);
+    --yazi: #ffffff;
+    --yazi-soluk: #c9bfe3;
+    --turuncu: #ff6a00;
+    --sari: #ffe100;
+    --baslik-font: "MostlyMono", "Courier New", monospace;
+    --govde-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--zemin);
+    color: var(--yazi);
+    font-family: var(--govde-font);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  img, video { max-width: 100%; display: block; }
+
+  a { color: var(--sari); }
+
+  .sarmal {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding-inline: 20px;
+  }
+
+  h1, h2, h3, .marka {
+    font-family: var(--baslik-font);
+    font-weight: normal;
+    letter-spacing: 0.03em;
+    /* MostlyMono'nun kalin hali yok: oyundaki gibi ayni renkte kenarlik harfi kalinlastirir */
+    -webkit-text-stroke: 0.035em currentColor;
+  }
+
+  /* ---------- Ust serit ---------- */
+  header {
+    padding-block: 18px;
+  }
+  header .sarmal {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .marka {
+    font-size: 26px;
+    margin: 0;
+  }
+
+  /* Uygulama ikonu henuz yok: yer tutucu */
+  .ikon-yer {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    border: 2px dashed var(--yazi-soluk);
+    display: grid;
+    place-items: center;
+    font-size: 9px;
+    line-height: 1.1;
+    text-align: center;
+    color: var(--yazi-soluk);
+    flex-shrink: 0;
+  }
+
+  /* ---------- Giris ---------- */
+  .giris {
+    background: url("img/fon_set1.png") center / cover no-repeat;
+    padding-block: 56px 72px;
+  }
+  .giris .sarmal {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 44px;
+    align-items: center;
+  }
+  .giris h1 {
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.1;
+    margin: 0 0 18px;
+  }
+  .giris h1 .vurgu { color: var(--sari); }
+  .giris p {
+    color: #eee8ff;
+    margin: 0 0 28px;
+    max-width: 34em;
+  }
+
+  .magazalar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .magaza {
+    display: inline-flex;
+    flex-direction: column;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    min-width: 170px;
+  }
+  .magaza small {
+    font-size: 11px;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .magaza strong {
+    font-size: 19px;
+    font-weight: 600;
+  }
+
+  /* Oyun yatay ve telefonun tam ekran oraninda kaydedildi (2380x1080) */
+  .video-cerceve {
+    border-radius: 22px;
+    overflow: hidden;
+    border: 6px solid #0b0618;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+    aspect-ratio: 2380 / 1080;
+    background: #0b0618;
+  }
+  .video-cerceve video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---------- Bolumler ---------- */
+  section { padding-block: 64px; }
+  section h2 {
+    font-size: clamp(26px, 3.4vw, 36px);
+    text-align: center;
+    margin: 0 0 36px;
+  }
+
+  .ozellikler {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .ozellik {
+    background: var(--kart);
+    border: 1px solid var(--kart-cizgi);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .ozellik .resim {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .ozellik .resim img { width: 60px; height: 60px; }
+  .ozellik .resim img.kucuk { width: 34px; height: 34px; }
+  .ozellik h3 {
+    font-size: 20px;
+    margin: 0 0 6px;
+    color: var(--sari);
+  }
+  .ozellik p {
+    margin: 0;
+    color: var(--yazi-soluk);
+  }
+
+  /* ---------- Ekran goruntuleri ---------- */
+  .ekranlar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  /* Gercek goruntu gelene kadar: setin fonu uzerinde etiket */
+  .ekran-yer {
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    border: 2px dashed rgba(255, 255, 255, 0.45);
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-family: var(--baslik-font);
+    font-size: 18px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    padding: 12px;
+  }
+  .ekran-yer.acik { color: #111; text-shadow: none; border-color: rgba(0, 0, 0, 0.35); }
+
+  /* ---------- Alt bilgi ---------- */
+  footer {
+    border-top: 1px solid var(--kart-cizgi);
+    padding-block: 28px 40px;
+    color: var(--yazi-soluk);
+    font-size: 15px;
+  }
+  footer .sarmal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    justify-content: center;
+  }
+  .yer-tutucu-yazi {
+    border: 1px dashed var(--yazi-soluk);
+    border-radius: 6px;
+    padding: 0 6px;
+  }
+
+  /* ---------- Dar ekran ---------- */
+  @media (max-width: 860px) {
+    .giris .sarmal { grid-template-columns: 1fr; }
+    .ozellikler { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .ozellikler, .ekranlar { grid-template-columns: 1fr; }
+    .giris { padding-block: 32px 48px; }
+  }
+
+  /* ---------- ONIZLEME: slogan secici (yayindan once silinecek) ---------- */
+  .onizleme {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: #fffbe6;
+    color: #222;
+    font-size: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+  }
+  .onizleme button {
+    font: inherit;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid #999;
+    background: #fff;
+    cursor: pointer;
+  }
+  .onizleme button.secili { background: var(--turuncu); color: #fff; border-color: var(--turuncu); }
+  body { padding-bottom: 70px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="sarmal">
+    <div class="ikon-yer">APP<br>ICON</div>
+    <p class="marka">Hoop &amp; Disc</p>
+  </div>
+</header>
+
+<div class="giris">
+  <div class="sarmal">
+    <div>
+      <h1 id="slogan">Catch with the hoop. <span class="vurgu">Never with the disc.</span></h1>
+      <p>Hoop &amp; Disc is a one-finger arcade game. Drag the disc and the hoop chases it. Sweep up targets with the hoop, but never let a target touch the disc. Power-ups keep changing the rules, so stay sharp.</p>
+      <div class="magazalar">
+        <span class="magaza"><small>Coming soon on</small><strong>Google Play</strong></span>
+        <span class="magaza"><small>Coming soon on the</small><strong>App Store</strong></span>
+      </div>
+    </div>
+    <div class="video-cerceve">
+      <video src="img/gameplay.mp4" autoplay muted loop playsinline></video>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="sarmal">
+    <h2>Simple to play, hard to master</h2>
+    <div class="ozellikler">
+      <div class="ozellik">
+        <div class="resim"><img src="img/disc.png" alt=""><img src="img/hoop.png" alt=""></div>
+        <h3>One finger, two pieces</h3>
+        <p>Drag the disc. The hoop follows wherever it goes.</p>
+      </div>
+      <div class="ozellik">
+        <div class="resim"><img src="img/hed4.png" alt=""></div>
+        <h3>Catch, don't touch</h3>
+        <p>Catch targets with the hoop. One touch on the disc and it's over.</p>
+      </div>
+      <div class="ozellik">
+        <div class="resim"><img src="img/shield3.png" alt=""><img src="img/uclu2.png" alt=""></div>
+        <h3>7 rule-changing power-ups</h3>
+        <p>Shields, triple hoops, an invisible hoop, a runaway disc and more.</p>
+      </div>
+      <div class="ozellik">
+        <div class="resim"><img src="img/atis4.png" alt=""></div>
+        <h3>Kamikaze targets</h3>
+        <p>Red targets dive straight at your disc. Dodge them or catch them.</p>
+      </div>
+      <div class="ozellik">
+        <div class="resim">
+          <img class="kucuk" src="img/hed_set1.png" alt="">
+          <img class="kucuk" src="img/hed_set2.png" alt="">
+          <img class="kucuk" src="img/hed_set3.png" alt="">
+          <img class="kucuk" src="img/hed_set4.png" alt="">
+          <img class="kucuk" src="img/hed_set5.png" alt="">
+          <img class="kucuk" src="img/hed_set0.png" alt="">
+        </div>
+        <h3>6 themes</h3>
+        <p>Purple, Ocean, Neon, Ice, Sunset and Classic. Pick your look.</p>
+      </div>
+      <div class="ozellik">
+        <div class="resim"><img src="img/hide3.png" alt=""></div>
+        <h3>No pop-up ads</h3>
+        <p>Ads only when you choose: for an extra life or to unlock a theme.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sarmal">
+    <h2>See it in action</h2>
+    <div class="ekranlar">
+      <div class="ekran-yer" style="background-image:url(img/fon_set1.png)">Screenshot 1<br>Purple theme<br>1920×1080</div>
+      <div class="ekran-yer" style="background-image:url(img/fon_set2.png)">Screenshot 2<br>Ocean theme<br>1920×1080</div>
+      <div class="ekran-yer" style="background-image:url(img/fon_set3.png)">Screenshot 3<br>Neon theme<br>1920×1080</div>
+      <div class="ekran-yer acik" style="background-image:url(img/fon_set4.png)">Screenshot 4<br>Ice theme<br>1920×1080</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="sarmal">
+    <span>© 2026 Hoop &amp; Disc</span>
+    <a href="privacy.html">Privacy Policy</a>
+    <span>Contact: <span class="yer-tutucu-yazi">e-mail address</span></span>
+    <a href="fonts/MostlyMono-lisans.html">Font: Mostly Mono by Kevin Richey</a>
+  </div>
+</footer>
+
+<!-- ONIZLEME: slogan secici. Slogan secilince bu blok ve ustteki .onizleme stilleri silinecek -->
+<div class="onizleme">
+  <span>Önizleme · slogan:</span>
+  <button data-a="Catch with the hoop." data-b="Never with the disc.">1</button>
+  <button data-a="Move the disc. The hoop follows." data-b="Don't touch.">2</button>
+  <button data-a="One finger. Two pieces." data-b="Zero mercy.">3</button>
+  <button data-a="The hoop hunts." data-b="The disc survives.">4</button>
+  <button data-a="Easy to touch." data-b="Hard to dodge.">5</button>
+</div>
+<script>
+  (function () {
+    var h1 = document.getElementById("slogan");
+    var dugmeler = document.querySelectorAll(".onizleme button");
+    function sec(d) {
+      h1.innerHTML = "";
+      h1.appendChild(document.createTextNode(d.getAttribute("data-a") + " "));
+      var s = document.createElement("span");
+      s.className = "vurgu";
+      s.textContent = d.getAttribute("data-b");
+      h1.appendChild(s);
+      dugmeler.forEach(function (x) { x.classList.toggle("secili", x === d); });
+    }
+    dugmeler.forEach(function (d) { d.addEventListener("click", function () { sec(d); }); });
+    sec(dugmeler[0]);
+  })();
+</script>
+
+</body>
+</html>
