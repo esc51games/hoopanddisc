@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hoop &amp; Disc: one-finger arcade game for Android &amp; iOS</title>
+<link rel="icon" type="image/png" href="img/icon.png">
 <meta name="description" content="Hoop & Disc is a one-finger arcade game. Drag the disc, the hoop chases it. Catch targets with the hoop, never with the disc.">
 <style>
   @font-face {
@@ -68,18 +69,10 @@
     margin: 0;
   }
 
-  /* Uygulama ikonu henuz yok: yer tutucu */
-  .ikon-yer {
+  .ikon {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    border: 2px dashed var(--yazi-soluk);
-    display: grid;
-    place-items: center;
-    font-size: 9px;
-    line-height: 1.1;
-    text-align: center;
-    color: var(--yazi-soluk);
     flex-shrink: 0;
   }
 
@@ -236,7 +229,7 @@
 
 <header>
   <div class="sarmal">
-    <div class="ikon-yer">APP<br>ICON</div>
+    <img class="ikon" src="img/icon.png" alt="" width="48" height="48">
     <p class="marka">Hoop &amp; Disc</p>
   </div>
 </header>
