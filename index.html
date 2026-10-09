@@ -235,33 +235,6 @@
     .ozellikler, .ekranlar { grid-template-columns: 1fr; }
     .giris { padding-block: 32px 48px; }
   }
-
-  /* ---------- ONIZLEME: slogan secici (yayindan once silinecek) ---------- */
-  .onizleme {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-    background: #fffbe6;
-    color: #222;
-    font-size: 14px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
-    z-index: 10;
-  }
-  .onizleme button {
-    font: inherit;
-    padding: 4px 12px;
-    border-radius: 8px;
-    border: 1px solid #999;
-    background: #fff;
-    cursor: pointer;
-  }
-  .onizleme button.secili { background: var(--turuncu); color: #fff; border-color: var(--turuncu); }
-  body { padding-bottom: 70px; }
 </style>
 </head>
 <body>
@@ -276,7 +249,7 @@
 <div class="giris">
   <div class="sarmal">
     <div>
-      <h1 id="slogan">Catch with the hoop. <span class="vurgu">Never with the disc.</span></h1>
+      <h1>Catch with the hoop. <span class="vurgu">Never with the disc.</span></h1>
       <p>Hoop &amp; Disc is a one-finger arcade game. Drag the disc and the hoop chases it. Sweep up targets with the hoop, but never let a target touch the disc. Power-ups keep changing the rules, so stay sharp.</p>
       <div class="magazalar">
         <span class="magaza"><small>Coming soon on</small><strong>Google Play</strong></span>
@@ -354,33 +327,6 @@
     <a href="fonts/MostlyMono-lisans.html">Font: Mostly Mono by Kevin Richey</a>
   </div>
 </footer>
-
-<!-- ONIZLEME: slogan secici. Slogan secilince bu blok ve ustteki .onizleme stilleri silinecek -->
-<div class="onizleme">
-  <span>Önizleme · slogan:</span>
-  <button data-a="Catch with the hoop." data-b="Never with the disc.">1</button>
-  <button data-a="Move the disc. The hoop follows." data-b="Don't touch.">2</button>
-  <button data-a="One finger. Two pieces." data-b="Zero mercy.">3</button>
-  <button data-a="The hoop hunts." data-b="The disc survives.">4</button>
-  <button data-a="Easy to touch." data-b="Hard to dodge.">5</button>
-</div>
-<script>
-  (function () {
-    var h1 = document.getElementById("slogan");
-    var dugmeler = document.querySelectorAll(".onizleme button");
-    function sec(d) {
-      h1.innerHTML = "";
-      h1.appendChild(document.createTextNode(d.getAttribute("data-a") + " "));
-      var s = document.createElement("span");
-      s.className = "vurgu";
-      s.textContent = d.getAttribute("data-b");
-      h1.appendChild(s);
-      dugmeler.forEach(function (x) { x.classList.toggle("secili", x === d); });
-    }
-    dugmeler.forEach(function (d) { d.addEventListener("click", function () { sec(d); }); });
-    sec(dugmeler[0]);
-  })();
-</script>
 
 </body>
 </html>
